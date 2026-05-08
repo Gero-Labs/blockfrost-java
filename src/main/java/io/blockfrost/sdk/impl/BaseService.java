@@ -4,8 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.blockfrost.sdk.api.exception.APIException;
 import io.blockfrost.sdk.api.model.ResponseError;
 import io.blockfrost.sdk.api.util.NetworkHelper;
-import io.blockfrost.sdk.impl.util.RateLimitHelper;
-import io.github.resilience4j.retrofit.RateLimiterCallAdapter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import retrofit2.Response;
@@ -35,13 +33,16 @@ public class BaseService {
     }
 
     protected Retrofit getRetrofit() {
+        // Rate-limiter call adapter (resilience4j-retrofit) removed in this fork —
+        // resilience4j-retrofit does not exist on the 2.x line, and its 1.x
+        // version pinned the whole resilience4j BOM + vavr at outdated
+        // versions. Blockfrost server enforces rate limits anyway and the
+        // consuming application can handle 429s at a higher layer.
         return new Retrofit.Builder()
-                .addCallAdapterFactory( RateLimiterCallAdapter.of(RateLimitHelper.rateLimiter()))
                 .baseUrl(getBaseUrl())
                 .addConverterFactory(JacksonConverterFactory.create())
                 .client(NetworkHelper.getInstance().getOkHttpClient())
                 .build();
-
     }
 
     public String getBaseUrl() {
