@@ -27,5 +27,20 @@ public class TransactionUtxoInputs {
     private String txHash;
     private BigDecimal outputIndex;
 
+    /** Hash of the output's datum, when it carries one. */
+    private String dataHash;
+
+    /** CBOR-encoded inline datum (CIP-32). */
+    private String inlineDatum;
+
+    /** Hash of the reference script attached to the output (CIP-33). */
+    private String referenceScriptHash;
+
+    /** True when this input is collateral, consumed only on phase-2 validation failure. */
+    private Boolean collateral;
+
+    /** True when this input is a reference input (CIP-31) — read, not spent. */
+    private Boolean reference;
+
 }
 
